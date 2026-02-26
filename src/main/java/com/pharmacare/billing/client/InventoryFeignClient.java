@@ -3,7 +3,7 @@ package com.pharmacare.billing.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
-import com.kce.pharma.inventoryservice.dto.MedicineResponse;
+import com.pharmacare.billing.dto.MedicineResponse;   
 import com.pharmacare.billing.dto.CartItemDto;
 
 @FeignClient(
@@ -18,4 +18,3 @@ public interface InventoryFeignClient {
     @GetMapping("/api/medicines/{id}")
     MedicineResponse getMedicineById(@PathVariable("id") String id);
 }
-                             
