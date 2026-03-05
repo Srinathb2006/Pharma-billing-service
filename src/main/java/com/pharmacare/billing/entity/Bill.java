@@ -18,6 +18,7 @@ public class Bill {
 
     private String pharmacistId;
     private String staffId;
+    private String staffName;
     // ================= Line Items =================
     private List<BillItem> items;
 
@@ -43,6 +44,14 @@ public class Bill {
 
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public String getStaffName() {
+        return staffName;
+    }
+
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
@@ -82,6 +91,8 @@ public class Bill {
         this.prescriptionId = builder.prescriptionId;
         this.createdAt = builder.createdAt;
         this.createdBy = builder.createdBy;
+        this.staffName = builder.staffName;
+        this.staffId = builder.staffId;
         this.paymentDate = builder.paymentDate;
     }
 
@@ -97,6 +108,8 @@ public class Bill {
 
     public static class Builder {
         private String createdBy;
+        private String staffName;
+        private String staffId;
         private String id;
         private String customerName;
         private String customerPhone;
@@ -117,6 +130,16 @@ public class Bill {
 
         public Builder createdBy(String createdBy) {
             this.createdBy = createdBy;
+            return this;
+        }
+
+        public Builder staffName(String staffName) {
+            this.staffName = staffName;
+            return this;
+        }
+
+        public Builder staffId(String staffId) {
+            this.staffId = staffId;
             return this;
         }
 

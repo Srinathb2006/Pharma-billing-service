@@ -107,6 +107,8 @@ public class BillingServiceImpl implements BillingService {
                 .paymentStatus("PENDING")
                 .createdAt(LocalDateTime.now())
                 .createdBy(email)
+                .staffName(request.getStaffName())
+                .staffId(request.getStaffId())
                 .build();
 
         return billRepository.save(bill);

@@ -17,60 +17,57 @@ import java.util.List;
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    private final MongoTemplate mongoTemplate;
-    private final BillRespository billRepository;
+        private final MongoTemplate mongoTemplate;
+        private final BillRespository billRepository;
 
-    public ReportServiceImpl(MongoTemplate mongoTemplate,
-                             BillRespository billRepository) {
-        this.mongoTemplate = mongoTemplate;
-        this.billRepository = billRepository;
-    }
-
-    @Override
-    public double getTotalSales(SalesReportRequest request) {
-
-        LocalDate fromDate = request.getStartDate();
-        LocalDate toDate = request.getEndDate();
-
-        if (fromDate == null || toDate == null) {
-            return 0.0;
+        public ReportServiceImpl(MongoTemplate mongoTemplate,
+                        BillRespository billRepository) {
+                this.mongoTemplate = mongoTemplate;
+                this.billRepository = billRepository;
         }
 
-        LocalDateTime start = fromDate.atStartOfDay();
-        LocalDateTime end = toDate.atTime(23, 59, 59);
+        @Override
+        public double getTotalSales(SalesReportRequest request) {
 
-        return billRepository
-                .findByCreatedAtBetweenAndPaymentStatus(start, end, "PAID")
-                .stream()
-                .mapToDouble(b -> b.getFinalAmount())
-                .sum();
-    }
+                LocalDate fromDate = request.getStartDate();
+                LocalDate toDate = request.getEndDate();
 
-    @Override
-    public List<StaffPerformanceDto> getStaffPerformance() {
+                if (fromDate == null || toDate == null) {
+                        return 0.0;
+                }
 
-        MatchOperation match = Aggregation.match(
-                Criteria.where("paymentStatus").is("PAID")
-                        .and("createdBy").ne(null)
-        );
+                LocalDateTime start = fromDate.atStartOfDay();
+                LocalDateTime end = toDate.atTime(23, 59, 59);
 
-        GroupOperation group = Aggregation.group("createdBy")
-                .sum("finalAmount").as("totalSales");
+                return billRepository
+                                .findByCreatedAtBetweenAndPaymentStatus(start, end, "PAID")
+                                .stream()
+                                .mapToDouble(b -> b.getFinalAmount())
+                                .sum();
+        }
 
-        ProjectionOperation project = Aggregation.project()
-                .and("_id").as("staffName")
-                .and("totalSales").as("totalSales");
+        @Override
+        public List<StaffPerformanceDto> getStaffPerformance() {
 
-        Aggregation aggregation = Aggregation.newAggregation(
-                match,
-                group,
-                project
-        );
+                MatchOperation match = Aggregation.match(
+                                Criteria.where("paymentStatus").is("PAID")
+                                                .and("createdBy").ne(null));
 
-        return mongoTemplate.aggregate(
-                aggregation,
-                "bills",
-                StaffPerformanceDto.class
-        ).getMappedResults();
-    }
+                GroupOperation group = Aggregation.group("staffName")
+                                .sum("finalAmount").as("totalSales");
+
+                ProjectionOperation project = Aggregation.project()
+                                .and("_id").as("staffName")
+                                .and("totalSales").as("totalSales");
+
+                Aggregation aggregation = Aggregation.newAggregation(
+                                match,
+                                group,
+                                project);
+
+                return mongoTemplate.aggregate(
+                                aggregation,
+                                "bills",
+                                StaffPerformanceDto.class).getMappedResults();
+        }
 }

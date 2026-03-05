@@ -6,13 +6,13 @@ public class CheckoutRequest {
 
     private String customerName;
     private String customerPhone;
-       
+    private String staffName;
+    private String staffId;
+
     private List<CartItemDto> items;
 
     public CheckoutRequest() {
     }
-
-    
 
     public String getCustomerPhone() {
         return customerPhone;

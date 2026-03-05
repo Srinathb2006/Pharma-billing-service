@@ -57,7 +57,7 @@ public class DashboardService {
         Map<String, Double> staffSales = paidBills.stream()
                 .filter(b -> b.getCreatedBy() != null)
                 .collect(Collectors.groupingBy(
-                        Bill::getCreatedBy,
+                        b -> b.getStaffName() != null ? b.getStaffName() : b.getCreatedBy(),
                         Collectors.summingDouble(Bill::getFinalAmount)));
 
         Map<String, Object> summary = new HashMap<>();
